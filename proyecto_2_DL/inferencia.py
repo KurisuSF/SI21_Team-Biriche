@@ -35,8 +35,7 @@ def predict(img_title_paths):
 
         # Inferencia
         # TODO: Para la imagen de entrada, utiliza tu modelo para predecir la clase mas probale
-
-
+        pred_label = modelo(original)
         # Original / transformada
         # pred_label (str): nombre de la clase predicha
         h, w = original.shape[:2]
