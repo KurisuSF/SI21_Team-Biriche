@@ -14,15 +14,16 @@ class Network(nn.Module):
         # TODO: Calcular dimension de salida
         out_dim = 7
         # TODO: Define las capas de tu red
-        net = nn.Sequential(
-            nn.Conv2d(3, 64, kernel_size=5),
+        self.net = nn.Sequential(
+            nn.Conv2d(48, 64, kernel_size=5),
             nn.ReLU(),
             nn.Conv2d(64, 16, kernel_size=3),
             nn.ReLU(),
             nn.MaxPool2d(kernel_size=2),
             nn.Flatten(start_dim=1, end_dim=-1),
             nn.Linear(out_dim*out_dim*16, 512),
-            nn.Softmax(512, 7),
+            nn.Linear(512, 7),
+            nn.Softmax(-1)
         )
         self.to(self.device)
  
@@ -32,12 +33,13 @@ class Network(nn.Module):
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         # TODO: Define la propagacion hacia adelante de tu red
-        feature_map = self.conv1(x)
-        feature_map = self.conv2(F.relu(feature_map))
-        feature_map = self.max_pool(F.relu(feature_map))
-        features = torch.flatten(feature_map, start_dim=1)
-        features = self.fc1(features)
-        logits = self.fc2(F.relu(features))
+        # feature_map = self.conv1(x)
+        # feature_map = self.conv2(F.relu(feature_map))
+        # feature_map = self.max_pool(F.relu(feature_map))
+        # features = torch.flatten(feature_map, start_dim=1)
+        # features = self.fc1(features)
+        # logits = self.fc2(F.relu(features))
+        logits = self.net(x)
         return logits
 
     def predict(self, x):

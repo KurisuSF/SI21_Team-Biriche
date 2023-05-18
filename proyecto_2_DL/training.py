@@ -65,7 +65,7 @@ def train():
     criterion = nn.CrossEntropyLoss()
 
     # Define el optimizador
-    optimizer = optim.Adam(modelo.parameters(),
+    optimizer = optim.Adam(modelo.net.parameters(),
                        lr=1e-4)
 
     best_epoch_loss = np.inf
