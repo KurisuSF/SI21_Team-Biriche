@@ -32,6 +32,9 @@ def validation_step(val_loader, net, cost_function):
         batch_labels = batch_labels.to(device)
         with torch.inference_mode():
             # TODO: realiza un forward pass, calcula el loss y acumula el costo
+            pred = net(batch_imgs)
+            loss = cost_function(pred, batch_labels)
+            val_loss += loss.item()
             
     # TODO: Regresa el costo promedio por minibatch
     return val_loss
@@ -59,10 +62,11 @@ def train():
                      n_classes = 7)
 
     # TODO: Define la funcion de costo
-    criterion = ...
+    criterion = nn.CrossEntropyLoss()
 
     # Define el optimizador
-    optimizer = ...
+    optimizer = optim.Adam(modelo.parameters(),
+                       lr=1e-4)
 
     best_epoch_loss = np.inf
     for epoch in range(n_epochs):
@@ -71,19 +75,22 @@ def train():
             batch_imgs = batch['transformed']
             batch_labels = batch['label']
             # TODO Zero grad, forward pass, backward pass, optimizer step
-            ...
+            predictions = modelo(batch_imgs)
+            loss = criterion(predictions, batch_labels)  
+            loss.backward()
+            optimizer.step() 
 
             # TODO acumula el costo
-            ...
+            train_loss += loss.item()
 
         # TODO Calcula el costo promedio
-        train_loss = ...
+        train_loss = train_loss / len(train_loader)
         val_loss = validation_step(val_loader, modelo, criterion)
         tqdm.write(f"Epoch: {epoch}, train_loss: {train_loss:.2f}, val_loss: {val_loss:.2f}")
 
         # TODO guarda el modelo si el costo de validación es menor al mejor costo de validación
-        ...
-        plotter.on_epoch_end(epoch, train_loss, val_loss)
+        if val_loss < best_epoch_loss:
+            plotter.on_epoch_end(epoch, train_loss, val_loss)
     plotter.on_train_end()
 
 if __name__=="__main__":
