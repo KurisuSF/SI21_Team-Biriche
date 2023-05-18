@@ -32,9 +32,9 @@ def validation_step(val_loader, net, cost_function):
         batch_labels = batch_labels.to(device)
         with torch.inference_mode():
             # TODO: realiza un forward pass, calcula el loss y acumula el costo
-            ...
+            
     # TODO: Regresa el costo promedio por minibatch
-    return ...
+    return val_loss
 
 def train():
     # Hyperparametros
