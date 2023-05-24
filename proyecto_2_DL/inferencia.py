@@ -35,7 +35,9 @@ def predict(img_title_paths):
 
         # Inferencia
         # TODO: Para la imagen de entrada, utiliza tu modelo para predecir la clase mas probable
-        pred = modelo.predict(transformed)
+        modelo.eval()
+        pred, x = modelo(transformed.unsqueeze(0))
+        pred = torch.argmax(pred, dim=1).item()
         pred_label = EMOTIONS_MAP[pred]
         
         # Original / transformada
