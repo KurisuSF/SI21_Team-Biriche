@@ -43,11 +43,8 @@ def train():
     # Hyperparametros
     learning_rate = 1e-4
     n_epochs = 50
-<<<<<<< HEAD
     batch_size = 128
-=======
     batch_size = 384
->>>>>>> f2e458953b112db40e6da04faf89d4f0697b619d
 
     # Train, validation, test loaders
     train_dataset, train_loader = \
