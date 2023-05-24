@@ -34,8 +34,10 @@ def predict(img_title_paths):
         original, transformed, denormalized = load_img(im_file)
 
         # Inferencia
-        # TODO: Para la imagen de entrada, utiliza tu modelo para predecir la clase mas probale
-        pred_label = modelo(original)
+        # TODO: Para la imagen de entrada, utiliza tu modelo para predecir la clase mas probable
+        pred = modelo.predict(transformed)
+        pred_label = EMOTIONS_MAP[pred]
+        
         # Original / transformada
         # pred_label (str): nombre de la clase predicha
         h, w = original.shape[:2]

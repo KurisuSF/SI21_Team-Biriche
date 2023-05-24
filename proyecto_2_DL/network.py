@@ -12,18 +12,23 @@ class Network(nn.Module):
         self.device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
         # TODO: Calcular dimension de salida
-        out_dim = 7
+        out_dim = math.floor((input_dim - 48 + 2*0)/1) + 1
+        h= self.calc_out_dim(input_dim, 3, 1, 0) //2
+        h= self.calc_out_dim(h, 3, 1, 0)//2
+        
         # TODO: Define las capas de tu red
         self.net = nn.Sequential(
-            nn.Conv2d(48, 64, kernel_size=5),
+            nn.Conv2d(in_channels=1, out_channels=32, kernel_size=3, stride=1, padding=0),
             nn.ReLU(),
-            nn.Conv2d(64, 16, kernel_size=3),
+            nn.MaxPool2d(kernel_size=2, stride=2),
+            nn.Conv2d(in_channels=32, out_channels=64, kernel_size=3, stride=1, padding=0),
             nn.ReLU(),
-            nn.MaxPool2d(kernel_size=2),
-            nn.Flatten(start_dim=1, end_dim=-1),
-            nn.Linear(out_dim*out_dim*16, 512),
-            nn.Linear(512, 7),
-            nn.Softmax(-1)
+            nn.MaxPool2d(kernel_size=2, stride=2),
+            nn.Flatten(),
+            nn.Linear(64 * h * h, 128),
+            nn.ReLU(),
+            nn.Linear(128, n_classes),
+            nn.Softmax(dim=-1)
         )
         self.to(self.device)
  
@@ -33,14 +38,9 @@ class Network(nn.Module):
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         # TODO: Define la propagacion hacia adelante de tu red
-        # feature_map = self.conv1(x)
-        # feature_map = self.conv2(F.relu(feature_map))
-        # feature_map = self.max_pool(F.relu(feature_map))
-        # features = torch.flatten(feature_map, start_dim=1)
-        # features = self.fc1(features)
-        # logits = self.fc2(F.relu(features))
         logits = self.net(x)
-        return logits
+        proba = F.softmax(logits, dim=-1)
+        return logits, proba
 
     def predict(self, x):
         with torch.inference_mode():
