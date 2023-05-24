@@ -12,9 +12,8 @@ class Network(nn.Module):
         self.device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
         # TODO: Calcular dimension de salida
-        out_dim = math.floor((input_dim - 48 + 2*0)/1) + 1
-        h= self.calc_out_dim(input_dim, 3, 1, 0) //2
-        h= self.calc_out_dim(h, 3, 1, 0)//2
+        h = self.calc_out_dim(input_dim, 3, 1, 0) // 2
+        h = self.calc_out_dim(h, 3, 1, 0) // 2
         
         # TODO: Define las capas de tu red
         self.net = nn.Sequential(
@@ -23,7 +22,7 @@ class Network(nn.Module):
             nn.MaxPool2d(kernel_size=2, stride=2),
             nn.Conv2d(in_channels=32, out_channels=64, kernel_size=3, stride=1, padding=0),
             nn.ReLU(),
-            nn.MaxPool2d(kernel_size=2, stride=2),
+            nn.MaxPool2d(kernel_size=2, stride=2),  
             nn.Flatten(),
             nn.Linear(64 * h * h, 128),
             nn.ReLU(),
@@ -46,7 +45,7 @@ class Network(nn.Module):
         with torch.inference_mode():
             return self.forward(x)
 
-    def save_model(net, model_name: str):
+    def save_model(self, model_name: str):
         '''
             Guarda el modelo en el path especificado
             args:
@@ -55,7 +54,7 @@ class Network(nn.Module):
         '''
         models_path = file_path / 'models' / model_name
         # TODO: Guarda los pesos de tu red neuronal en el path especificado
-        torch.save(net.state_dict(), models_path)
+        torch.save(self.net.state_dict(), models_path)
 
     def load_model(self, model_name: str):
         '''
@@ -63,5 +62,6 @@ class Network(nn.Module):
             args:
             - path (str): path relativo donde se guardó el modelo
         '''
+        models_path = file_path / 'models' / model_name
         # TODO: Carga los pesos de tu red neuronal
-        torch.load(model_name)
+        self.net.load_state_dict(torch.load(models_path))
