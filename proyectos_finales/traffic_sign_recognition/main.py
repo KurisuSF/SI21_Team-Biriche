@@ -13,13 +13,13 @@ data = []
 labels = []
 classes = 43
 cur_path = os.path.dirname(os.path.abspath(__file__))
-print(cur_path)
+# print(cur_path)
 
 #Retrieving the images and their labels
 for i in range(classes):
-   path = os.path.join(cur_path,'train',str(i))
+   path = os.path.join(cur_path,'Train',str(i))
    images = os.listdir(path)
-for a in images:
+   for a in images:
         try:
            image = Image.open(path + '\\'+ a)
            image = image.resize((30,30))
@@ -62,7 +62,7 @@ model.add(Dense(43, activation='softmax'))
 model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
 eps = 15
 anc = model.fit(X_t1, y_t1, batch_size=32, epochs=eps, validation_data=(X_t2, y_t2))
-model.save("my_model.h5")
+model.save("my_model_1.h5")
 
 #plotting graphs for accuracy
 plt.figure(0)
