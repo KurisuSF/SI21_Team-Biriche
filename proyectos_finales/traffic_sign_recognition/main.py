@@ -5,10 +5,10 @@ import cv2
 import tensorflow as tf
 from PIL import Image
 import os
-from sklearn.model_selection import train_test_split #to split training and testing data
-from keras.utils import to_categorical #to convert the labels present in y_train and t_test into one-hot encoding
+from sklearn.model_selection import train_test_split 
+from keras.utils import to_categorical 
 from keras.models import Sequential, load_model
-from keras.layers import Conv2D, MaxPool2D, Dense, Flatten, Dropout#to create CNN
+from keras.layers import Conv2D, MaxPool2D, Dense, Flatten, Dropout
 data = []
 labels = []
 classes = 43
@@ -112,7 +112,7 @@ for i in range(1,26):
     plt.grid(b=None)
     plt.xlabel(rand_img.shape[1], fontsize = 20)#width of image
     plt.ylabel(rand_img.shape[0], fontsize = 20)#height of image
-    plt.show()
+plt.show()
 
 # Converting lists into numpy arrays
 data = np.array(data)
@@ -148,7 +148,8 @@ lr = 1e-4
 opt = tf.keras.optimizers.Nadam(learning_rate = lr)
 model.compile(loss = 'categorical_crossentropy', optimizer = opt, metrics = ['accuracy'])
 anc = model.fit(X_t1, y_t1, batch_size=128, epochs=eps, validation_data=(X_t2, y_t2))
-model.save("my_model_2.h5")
+mn = 2
+model.save("my_model_" + mn + ".h5")
 
 # Plotting graphs for accuracy
 plt.figure(0)
@@ -184,7 +185,7 @@ pred = model.predict(X_test)
 # Accuracy with the test data
 from sklearn.metrics import accuracy_score
 print(accuracy_score(labels, pred.argmax(axis=1)))
-model.save("traffic_classifier.h5")
+model.save("traffic_classifier_" + mn + ".h5")
 
 # Predicting with the test data
 plt.figure(figsize = (25, 25))
