@@ -15,7 +15,7 @@ classes = 43
 cur_path = os.path.dirname(os.path.abspath(__file__))
 # print(cur_path)
 
-#Retrieving the images and their labels
+# Retrieving the images and their labels
 for i in range(classes):
    path = os.path.join(cur_path,'Train',str(i))
    images = os.listdir(path)
@@ -29,43 +29,60 @@ for i in range(classes):
            labels.append(i)
         except:
            print("Error loading image")
-           
-# folders = os.listdir(path)
-
-# train_number = []
-# class_num = []
-
-# for folder in folders:
-#     train_files = os.listdir(path + '/' + folder)
-#     train_number.append(len(train_files))
-#     class_num.append(classes[int(folder)])
+      
+# Iterating over the test folders    
+folders = os.listdir(path)
+train_number = []
+class_num = []
+for folder in folders:
+    train_files = os.listdir(cur_path + '/Train/' + folder)
+    train_number.append(len(train_files))
+    class_num.append(classes[int(folder)])
     
-# # Sorting the dataset on the basis of number of images in each class
-# zipped_lists = zip(train_number, class_num)
-# sorted_pairs = sorted(zipped_lists)
-# tuples = zip(*sorted_pairs)
-# train_number, class_num = [ list(tuple) for tuple in  tuples]
+# Sorting the dataset on the basis of number of images in each class
+zipped_lists = zip(train_number, class_num)
+sorted_pairs = sorted(zipped_lists)
+tuples = zip(*sorted_pairs)
+train_number, class_num = [ list(tuple) for tuple in  tuples]
 
-# # Plotting the number of images in each class
-# plt.figure(figsize=(21,10))  
-# plt.bar(class_num, train_number)
-# plt.xticks(class_num, rotation='vertical')
-# plt.show() 
+# Plotting the number of images in each class
+plt.figure(figsize=(21,10))  
+plt.bar(class_num, train_number)
+plt.xticks(class_num, rotation='vertical')
+plt.show() 
 
-#Converting lists into numpy arrays
+# Visualizing 25 random images from test data
+import random
+from matplotlib.image import imread
+
+test = pd.read_csv(cur_path + '/Test.csv')
+imgs = test["Path"].values
+
+plt.figure(figsize=(25,25))
+
+for i in range(1,26):
+    plt.subplot(5,5,i)
+    random_img_path = cur_path + '/' + random.choice(imgs)
+    rand_img = imread(random_img_path)
+    plt.imshow(rand_img)
+    plt.grid(b=None)
+    plt.xlabel(rand_img.shape[1], fontsize = 20)#width of image
+    plt.ylabel(rand_img.shape[0], fontsize = 20)#height of image
+
+# Converting lists into numpy arrays
 data = np.array(data)
 labels = np.array(labels)
 print(data.shape, labels.shape)
 
-#Splitting training and testing dataset
+# Splitting training and testing dataset
 X_t1, X_t2, y_t1, y_t2 = train_test_split(data, labels, test_size=0.2, random_state=42)
 print(X_t1.shape, X_t2.shape, y_t1.shape, y_t2.shape)
 
-#Converting the labels into one hot encoding
+# Converting the labels into one hot encoding
 y_t1 = to_categorical(y_t1, 43)
 y_t2 = to_categorical(y_t2, 43)
 
-#Building the model
+# Building the model
 model = Sequential()
 model.add(Conv2D(filters=32, kernel_size=(5,5), activation='relu', input_shape = X_t1.shape[1:]))
 model.add(Conv2D(filters=32, kernel_size=(5,5), activation='relu'))
@@ -80,13 +97,15 @@ model.add(Dense(256, activation='relu'))
 model.add(Dropout(rate=0.5))
 model.add(Dense(43, activation='softmax'))
 
-#Compilation of the model
-model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
-eps = 15
-anc = model.fit(X_t1, y_t1, batch_size=32, epochs=eps, validation_data=(X_t2, y_t2))
+# Compilation of the model
+eps = 20
+lr = 1e-3
+opt = tf.keras.optimizers.Adam(learning_rate = lr, decay = lr/eps)
+model.compile(loss = 'categorical_crossentropy', optimizer = opt, metrics = ['accuracy'])
+anc = model.fit(X_t1, y_t1, batch_size=64, epochs=eps, validation_data=(X_t2, y_t2))
 model.save("my_model_1.h5")
 
-#plotting graphs for accuracy
+# Plotting graphs for accuracy
 plt.figure(0)
 plt.plot(anc.history['accuracy'], label='training accuracy')
 plt.plot(anc.history['val_accuracy'], label='val accuracy')
@@ -104,7 +123,7 @@ plt.ylabel('loss')
 plt.legend()
 plt.show()
 
-#testing accuracy on test dataset
+# Testing accuracy on test dataset
 from sklearn.metrics import accuracy_score
 y_test = pd.read_csv(cur_path + "\\Test.csv")
 labels = y_test["ClassId"].values
@@ -117,7 +136,25 @@ for img in imgs:
 X_test=np.array(data)
 pred = model.predict(X_test)
 
-#Accuracy with the test data
+# Accuracy with the test data
 from sklearn.metrics import accuracy_score
 print(accuracy_score(labels, pred.argmax(axis=1)))
 model.save("traffic_classifier.h5")
+
+# Predicting with the test data
+plt.figure(figsize = (25, 25))
+
+start_index = 0
+for i in range(25):
+    plt.subplot(5, 5, i + 1)
+    plt.grid(False)
+    plt.xticks([])
+    plt.yticks([])
+    prediction = pred[start_index + i]
+    actual = labels[start_index + i]
+    col = 'g'
+    if prediction != actual:
+        col = 'r'
+    plt.xlabel('Actual={} || Pred={}'.format(actual, prediction), color = col)
+    plt.imshow(X_test[start_index + i])
+plt.show()
