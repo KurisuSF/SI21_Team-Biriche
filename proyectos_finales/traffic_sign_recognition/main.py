@@ -35,7 +35,7 @@ folders = os.listdir(path)
 train_number = []
 class_num = []
 for folder in folders:
-    train_files = os.listdir(cur_path + '/Train/' + folder)
+    train_files = os.listdir(cur_path + '\\Train\\' + folder)
     train_number.append(len(train_files))
     class_num.append(classes[int(folder)])
     
@@ -55,14 +55,14 @@ plt.show()
 import random
 from matplotlib.image import imread
 
-test = pd.read_csv(cur_path + '/Test.csv')
+test = pd.read_csv(cur_path + '\Test.csv')
 imgs = test["Path"].values
 
 plt.figure(figsize=(25,25))
 
 for i in range(1,26):
     plt.subplot(5,5,i)
-    random_img_path = cur_path + '/' + random.choice(imgs)
+    random_img_path = cur_path + '\\' + random.choice(imgs)
     rand_img = imread(random_img_path)
     plt.imshow(rand_img)
     plt.grid(b=None)
