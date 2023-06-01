@@ -74,26 +74,26 @@ classes = { 0:'Speed limit (20km/h)',
             41:'End of no passing', 
             42:'End no passing veh > 3.5 tons' }
       
-# Iterating over the test folders    
-folders = os.listdir(cur_path + '\\Train')
-train_number = []
-class_num = []
-for folder in folders:
-    train_files = os.listdir(cur_path + '\\Train\\' + folder)
-    train_number.append(len(train_files))
-    class_num.append(classes[int(folder)])
+# # Iterating over the test folders    
+# folders = os.listdir(cur_path + '\\Train')
+# train_number = []
+# class_num = []
+# for folder in folders:
+#     train_files = os.listdir(cur_path + '\\Train\\' + folder)
+#     train_number.append(len(train_files))
+#     class_num.append(classes[int(folder)])
     
-# Sorting the dataset on the basis of number of images in each class
-zipped_lists = zip(train_number, class_num)
-sorted_pairs = sorted(zipped_lists)
-tuples = zip(*sorted_pairs)
-train_number, class_num = [ list(tuple) for tuple in  tuples]
+# # Sorting the dataset on the basis of number of images in each class
+# zipped_lists = zip(train_number, class_num)
+# sorted_pairs = sorted(zipped_lists)
+# tuples = zip(*sorted_pairs)
+# train_number, class_num = [ list(tuple) for tuple in  tuples]
 
-# Plotting the number of images in each class
-plt.figure(figsize=(21,10))  
-plt.bar(class_num, train_number)
-plt.xticks(class_num, rotation='vertical')
-plt.show() 
+# # Plotting the number of images in each class
+# plt.figure(figsize=(21,10))  
+# plt.bar(class_num, train_number)
+# plt.xticks(class_num, rotation='vertical')
+# plt.show() 
 
 # Visualizing 25 random images from test data
 import random
@@ -148,7 +148,7 @@ lr = 1e-4
 opt = tf.keras.optimizers.Nadam(learning_rate = lr)
 model.compile(loss = 'categorical_crossentropy', optimizer = opt, metrics = ['accuracy'])
 anc = model.fit(X_t1, y_t1, batch_size=128, epochs=eps, validation_data=(X_t2, y_t2))
-mn = 2
+mn = "2"
 model.save("my_model_" + mn + ".h5")
 
 # Plotting graphs for accuracy
@@ -169,7 +169,7 @@ plt.ylabel('loss')
 plt.legend()
 plt.show()
 
-# Testing accuracy on test dataset
+# Testing accuracy on validation dataset
 from sklearn.metrics import accuracy_score
 y_test = pd.read_csv(cur_path + "\\Test.csv")
 labels = y_test["ClassId"].values
@@ -199,7 +199,7 @@ for i in range(25):
     prediction = pred[start_index + i]
     actual = labels[start_index + i]
     col = 'g'
-    if (prediction) != (actual):
+    if np.array_equal(prediction, actual) == False:
         col = 'r'
     plt.xlabel('Actual={} || Pred={}'.format(actual, prediction), color = col)
     plt.imshow(X_test[start_index + i])
