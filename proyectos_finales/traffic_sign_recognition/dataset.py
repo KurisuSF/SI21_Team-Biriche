@@ -72,29 +72,32 @@
 
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
-import tensorflow as tf 
+import matplotlib.pyplot as plt#to plot accuracy
+import cv2
+import tensorflow as tf
 from PIL import Image
-import os 
-from sklearn.model_selection import train_test_split
-from keras.utils import to_categorical 
-from keras.models import Sequential 
-from keras.layers import Conv2D, MaxPool2D, Dense, Flatten, Dropout
+import os
+from sklearn.model_selection import train_test_split #to split training and testing data
+from keras.utils import to_categorical #to convert the labels present in y_train and t_test into one-hot encoding
+from keras.models import Sequential, load_model
+from keras.layers import Conv2D, MaxPool2D, Dense, Flatten, Dropout#to create CNN
 data = []
 labels = []
-classes = 43 
-cur_path = os.getcwd() 
-for i in range(classes): 
-  path = os. path.join(cur_path,'train', str(i)) 
-  images = os.listdir(path) 
-  for a in images: 
-    try: 
-     image = Image.open(path + '\\'+ a)
-     image = image.resize((30,30)) 
-     image = np.array(image) 
-     data.append(image) 
-     labels.append(i) 
-    except: 
-        print("Error loading image") 
-data = np.array(data)
-labels = np.array(labels)
+classes = 43
+cur_path = os.path.dirname(os.path.abspath(__file__))
+# print(cur_path)
+
+# Retrieving the images and their labels
+for i in range(classes):
+   path = os.path.join(cur_path,'Train',str(i))
+   images = os.listdir(path)
+   for a in images:
+        try:
+           image = Image.open(path + '\\'+ a)
+           image = image.resize((30,30))
+           image = np.array(image)
+          #sim = Image.fromarray(image)
+           data.append(image)
+           labels.append(i)
+        except:
+           print("Error loading image")
