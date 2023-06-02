@@ -1,6 +1,6 @@
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt#to plot accuracy
+import matplotlib.pyplot as plt
 import cv2
 import tensorflow as tf
 from PIL import Image
@@ -186,21 +186,3 @@ pred = model.predict(X_test)
 from sklearn.metrics import accuracy_score
 print(accuracy_score(labels, pred.argmax(axis=1)))
 model.save("traffic_classifier_" + mn + ".h5")
-
-# Predicting with the test data
-plt.figure(figsize = (25, 25))
-
-start_index = 0
-for i in range(25):
-    plt.subplot(5, 5, i + 1)
-    plt.grid(False)
-    plt.xticks([])
-    plt.yticks([])
-    prediction = pred[start_index + i]
-    actual = labels[start_index + i]
-    col = 'g'
-    if np.array_equal(prediction, actual) == False:
-        col = 'r'
-    plt.xlabel('Actual={} || Pred={}'.format(actual, prediction), color = col)
-    plt.imshow(X_test[start_index + i])
-plt.show()
