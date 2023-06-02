@@ -143,12 +143,12 @@ model.add(Dropout(rate=0.5))
 model.add(Dense(43, activation='softmax'))
 
 # Compilation of the model
-eps = 30
-lr = 1e-4
+eps = 50
+lr = 1e-5
 opt = tf.keras.optimizers.Nadam(learning_rate = lr)
 model.compile(loss = 'categorical_crossentropy', optimizer = opt, metrics = ['accuracy'])
-anc = model.fit(X_t1, y_t1, batch_size=128, epochs=eps, validation_data=(X_t2, y_t2))
-mn = "2"
+anc = model.fit(X_t1, y_t1, batch_size=256, epochs=eps, validation_data=(X_t2, y_t2))
+mn = "1f"
 model.save("my_model_" + mn + ".h5")
 
 # Plotting graphs for accuracy
